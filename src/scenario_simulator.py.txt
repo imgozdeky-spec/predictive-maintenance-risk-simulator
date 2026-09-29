@@ -1,0 +1,85 @@
+import pandas as pd
+
+
+data = pd.read_csv("../data/sensor_data.csv")
+
+
+# Maintenance scenario parameters
+maintenance_cost = 500
+production_loss_per_hour = 300
+failure_cost = 5000
+
+
+def calculate_scenario(
+    failure_probability,
+    maintenance_delay_hours,
+    maintenance_duration_hours
+):
+    """Calculate the estimated cost of a maintenance scenario."""
+
+    failure_cost_expected = failure_probability * failure_cost
+
+    production_loss = (
+        maintenance_duration_hours * production_loss_per_hour
+    )
+
+    delay_risk = (
+        failure_probability
+        * maintenance_delay_hours
+        * production_loss_per_hour
+    )
+
+    total_cost = (
+        maintenance_cost
+        + production_loss
+        + delay_risk
+        + failure_cost_expected
+    )
+
+    return total_cost
+
+
+# Example scenarios
+scenarios = [
+    {
+        "name": "Immediate Maintenance",
+        "delay": 0,
+        "duration": 6
+    },
+    {
+        "name": "Maintenance After 12 Hours",
+        "delay": 12,
+        "duration": 6
+    },
+    {
+        "name": "Maintenance After 24 Hours",
+        "delay": 24,
+        "duration": 6
+    }
+]
+
+
+failure_probability = 0.75
+
+results = []
+
+for scenario in scenarios:
+
+    total_cost = calculate_scenario(
+        failure_probability,
+        scenario["delay"],
+        scenario["duration"]
+    )
+
+    results.append(
+        {
+            "scenario": scenario["name"],
+            "estimated_cost": round(total_cost, 2)
+        }
+    )
+
+
+results_df = pd.DataFrame(results)
+
+print("Maintenance Scenario Analysis:")
+print(results_df)

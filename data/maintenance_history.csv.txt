@@ -1,0 +1,4 @@
+equipment_id,last_maintenance_days,previous_failures,maintenance_duration_hours
+Engine_A,45,2,6
+Engine_B,20,0,4
+CNC_01,90,3,8

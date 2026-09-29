@@ -1,0 +1,40 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data = pd.read_csv("../data/sensor_data.csv")
+
+print("Sensor Data:")
+print(data.head())
+
+print("\nStatistical Summary:")
+print(data.describe())
+
+# Average sensor values by equipment
+equipment_summary = data.groupby("equipment_id")[
+    ["temperature", "vibration", "pressure", "energy_consumption"]
+].mean()
+
+print("\nEquipment Summary:")
+print(equipment_summary)
+
+# Temperature and vibration visualization
+plt.figure(figsize=(10, 6))
+
+for equipment in data["equipment_id"].unique():
+    equipment_data = data[data["equipment_id"] == equipment]
+    plt.plot(
+        equipment_data["timestamp"],
+        equipment_data["temperature"],
+        marker="o",
+        label=equipment
+    )
+
+plt.title("Equipment Temperature Trends")
+plt.xlabel("Time")
+plt.ylabel("Temperature")
+plt.xticks(rotation=45)
+plt.legend()
+plt.tight_layout()
+
+plt.savefig("../outputs/charts/temperature_trends.png")
+plt.show()

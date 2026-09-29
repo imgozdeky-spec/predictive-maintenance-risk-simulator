@@ -1,0 +1,45 @@
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+
+# Load sensor data
+data = pd.read_csv("../data/sensor_data.csv")
+
+# Example failure labels for demonstration
+# 1 = failure risk, 0 = normal
+data["failure_risk"] = (
+    (data["temperature"] > 80)
+    | (data["vibration"] > 3.5)
+    | (data["energy_consumption"] > 95)
+).astype(int)
+
+features = [
+    "temperature",
+    "vibration",
+    "pressure",
+    "energy_consumption",
+    "operating_hours"
+]
+
+X = data[features]
+y = data["failure_risk"]
+
+# Train a Random Forest model
+model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+
+model.fit(X, y)
+
+# Calculate risk probabilities
+data["failure_probability"] = model.predict_proba(X)[:, 1]
+
+print(
+    data[
+        [
+            "equipment_id",
+            "timestamp",
+            "failure_probability"
+        ]
+    ]
+)

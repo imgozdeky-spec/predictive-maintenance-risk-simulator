@@ -1,0 +1,37 @@
+import pandas as pd
+
+data = pd.read_csv("../data/sensor_data.csv")
+
+# Normalize sensor values
+temperature_score = data["temperature"] / 100
+vibration_score = data["vibration"] / 5
+energy_score = data["energy_consumption"] / 120
+
+# Weighted risk score
+data["risk_score"] = (
+    temperature_score * 0.4
+    + vibration_score * 0.4
+    + energy_score * 0.2
+)
+
+def classify_risk(score):
+    if score >= 0.75:
+        return "Critical"
+    elif score >= 0.50:
+        return "High"
+    elif score >= 0.30:
+        return "Medium"
+    else:
+        return "Low"
+
+data["risk_level"] = data["risk_score"].apply(classify_risk)
+
+print(
+    data[
+        [
+            "equipment_id",
+            "risk_score",
+            "risk_level"
+        ]
+    ]
+)
